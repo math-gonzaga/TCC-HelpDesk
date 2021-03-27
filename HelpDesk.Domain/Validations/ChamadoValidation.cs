@@ -10,7 +10,7 @@ namespace HelpDesk.Domain.Validations
     {
         public ChamadoValidation()
         {
-            RuleFor(x => x.Descricao)
+            RuleFor(x => x.Nome)
                 .NotEmpty()
                 .NotNull()
                 .Length(3, 200);

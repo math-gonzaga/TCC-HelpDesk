@@ -1,8 +1,8 @@
 ﻿using HelpDesk.Domain.Models.Enums;
 
-namespace HelpDesk.Domain.Models
+namespace HelpDesk.Application.DataContract.Request.Usuario
 {
-    public class Usuario
+    public class UpdateUsuarioRequest
     {
         public int ID { get; set; }
         public TipoUsuarionEnum Tipo { get; set; }
