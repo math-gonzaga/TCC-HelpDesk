@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.0" NoWarn="NU1605" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HelpDesk.Application\HelpDesk.Application.csproj" />
+    <ProjectReference Include="..\HelpDesk.Infra\HelpDesk.Infra.csproj" />
   </ItemGroup>
 
 </Project>

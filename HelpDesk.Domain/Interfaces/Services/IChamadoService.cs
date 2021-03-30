@@ -11,7 +11,7 @@ namespace HelpDesk.Domain.Interfaces.Services
 
         Task<Response> GetAll();
 
-        Task<Response> Registar(Chamado chamado);
+        Task<Response> Registrar(Chamado chamado);
 
         Task<Response> Update(Chamado chamado);
     }

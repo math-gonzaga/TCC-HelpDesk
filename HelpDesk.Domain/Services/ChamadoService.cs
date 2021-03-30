@@ -37,7 +37,7 @@ namespace HelpDesk.Domain.Services
             return response;
         }
 
-        public async Task<Response> Registar(Chamado chamado)
+        public async Task<Response> Registrar(Chamado chamado)
         {
             var response = new Response<Chamado>();
             var validation = new ChamadoValidation();
@@ -46,7 +46,7 @@ namespace HelpDesk.Domain.Services
             if (erros.Report.Count > 0)
                 return erros;
 
-            var data = await _chamadoRepository.Registar(chamado);
+            var data = await _chamadoRepository.Registrar(chamado);
             response.Data = data;
 
             return response;

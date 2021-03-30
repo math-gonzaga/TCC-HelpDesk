@@ -1,18 +1,18 @@
-using AutoMapper;
+using HelpDesk.Application.Applications;
+using HelpDesk.Application.Interfaces;
 using HelpDesk.Application.Mapper;
+using HelpDesk.Domain.Interfaces.Repositories;
+using HelpDesk.Domain.Interfaces.Repositories.DataConnector;
+using HelpDesk.Domain.Interfaces.Services;
+using HelpDesk.Domain.Services;
+using HelpDesk.Infra.DataConnector;
+using HelpDesk.Infra.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HelpDesk.API
 {
@@ -28,11 +28,26 @@ namespace HelpDesk.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(Core));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "HelpDesk.API", Version = "v1" });
             });
+
+            string connectionString = Configuration.GetConnectionString("default");
+
+            services.AddScoped<IDbConnector>(db => new SqlConnector(connectionString));
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IUsuarioApplication, UsuarioApplication>();
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+            services.AddScoped<IChamadoApplication, ChamadoApplication>();
+            services.AddScoped<IChamadoService, ChamadoService>();
+            services.AddScoped<IChamadoRepository, ChamadoRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

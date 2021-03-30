@@ -11,7 +11,7 @@ namespace HelpDesk.Domain.Validations.Base
 
         public Response(List<Report> reports)
         {
-            Report = reports;
+            Report = reports ?? new List<Report>();
         }
 
         public Response(Report report) : this(new List<Report>() { report })
@@ -27,11 +27,20 @@ namespace HelpDesk.Domain.Validations.Base
         public static Response Unprocessable(List<Report> reports) => new Response(reports);
 
         public static Response Unprocessable(Report report) => new Response(report);
+
+        public static Response<T> Unprocessable<T>(List<Report> reports)
+        {
+            return new Response<T>(reports);
+        }
     }
 
     public class Response<T> : Response
     {
         public Response()
+        {
+        }
+
+        public Response(List<Report> reports) : base(reports)
         {
         }
 

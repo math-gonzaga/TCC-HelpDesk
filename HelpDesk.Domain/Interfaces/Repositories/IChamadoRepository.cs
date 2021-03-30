@@ -12,7 +12,7 @@ namespace HelpDesk.Domain.Interfaces.Repositories
 
         Task<List<Chamado>> GetAll();
 
-        Task<Chamado> Registar(Chamado chamado);
+        Task<Chamado> Registrar(Chamado chamado);
 
         Task<Chamado> Update(Chamado chamado);
     }

@@ -10,7 +10,7 @@ namespace HelpDesk.Application.Interfaces
 
         Task<Response> GetAll();
 
-        Task<Response> Registar(RegistrarChamadoRequest registrarChamado);
+        Task<Response> Registrar(RegistrarChamadoRequest registrarChamado);
 
         Task<Response> Update(UpdateChamadoRequest updateChamado);
     }

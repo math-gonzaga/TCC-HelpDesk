@@ -29,11 +29,11 @@ namespace HelpDesk.Application.Applications
             return await _chamadoService.GetAll();
         }
 
-        public async Task<Response> Registar(RegistrarChamadoRequest registrarChamado)
+        public async Task<Response> Registrar(RegistrarChamadoRequest registrarChamado)
         {
             var chamado = _mapper.Map<Chamado>(registrarChamado);
 
-            return await _chamadoService.Registar(chamado);
+            return await _chamadoService.Registrar(chamado);
         }
 
         public async Task<Response> Update(UpdateChamadoRequest updateChamado)
