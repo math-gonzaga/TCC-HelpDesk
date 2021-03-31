@@ -5,9 +5,9 @@ GO
 CREATE PROCEDURE UpdateUsuario
 (
 	@id INT,
-	@nome VARCHAR,
+	@nome VARCHAR(200),
 	@tipo INT,
-	@descricao VARCHAR
+	@descricao VARCHAR(200)
 ) AS
 
 BEGIN
@@ -19,3 +19,4 @@ BEGIN
 	WHERE 
 		ID_Usuario = @id
 END
+GO

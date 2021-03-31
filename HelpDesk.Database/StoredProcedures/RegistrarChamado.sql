@@ -84,3 +84,4 @@ BEGIN
 
     DEALLOCATE cursor1
 END
+GO

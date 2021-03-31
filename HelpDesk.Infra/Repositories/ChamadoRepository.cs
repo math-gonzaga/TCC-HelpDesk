@@ -27,7 +27,9 @@ namespace HelpDesk.Infra.Repositories
 
             var mensagems = multi.Read<MensagemChamado>().ToList();
             var chamado = multi.Read<Chamado>().FirstOrDefault();
-            chamado.Mensagens = mensagems;
+            
+            if(chamado != null)
+                chamado.Mensagens = mensagems;
 
             return chamado;
         }

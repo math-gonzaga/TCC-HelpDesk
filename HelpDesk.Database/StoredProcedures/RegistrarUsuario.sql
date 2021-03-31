@@ -4,15 +4,15 @@ GO
 
 CREATE PROCEDURE RegistrarUsuario 
 (
-	@nome VARCHAR,
+	@nome VARCHAR(200),
 	@tipo INT,
-	@descricao VARCHAR
+	@descricao VARCHAR(200)
 ) AS
 
 BEGIN
 	
 	DECLARE @id INT 
-	SELECT @id = (MAX(ID_Usuario) + 1) FROM TB_USUARIO
+	SET @id = (SELECT (ISNULL(MAX(ID_Usuario),0) + 1) FROM TB_USUARIO)
 
 	INSERT INTO TB_USUARIO
 	(
@@ -31,5 +31,7 @@ BEGIN
 		GETDATE()
 	)
 
-END
+	SELECT @id
 
+END
+GO

@@ -34,7 +34,7 @@ namespace HelpDesk.Infra.Repositories
             parameters.Add("@tipo", usuario.Tipo);
             parameters.Add("@descricao", usuario.Descricao);
 
-            var usuarioID = await _dbConnector.dbConnection.ExecuteAsync("RegistrarUsuario", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
+            var usuarioID = (int)await _dbConnector.dbConnection.ExecuteScalarAsync("RegistrarUsuario", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
 
             return await Get(usuarioID);
         }
@@ -49,7 +49,7 @@ namespace HelpDesk.Infra.Repositories
 
             await _dbConnector.dbConnection.ExecuteAsync("UpdateUsuario", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
 
-            return usuario;
+            return await Get(usuario.ID);
         }
     }
 }

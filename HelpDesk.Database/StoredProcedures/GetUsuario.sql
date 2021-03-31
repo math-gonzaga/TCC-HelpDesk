@@ -19,5 +19,6 @@ BEGIN
 	WHERE ID_USUARIO = @id
 
 END
+GO
 
 EXEC GetUsuario 1

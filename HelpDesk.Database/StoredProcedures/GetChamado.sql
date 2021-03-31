@@ -27,5 +27,6 @@ BEGIN
 	WHERE ID_CHAMADO = @id
 
 END
+GO
 
 EXEC GetChamado 1

@@ -16,5 +16,6 @@ BEGIN
 	WHERE ID_TIPO_USUARIO = @id
 
 END
+GO
 
 EXEC GetTipoUsuario 1
