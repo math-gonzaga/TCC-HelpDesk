@@ -37,7 +37,11 @@ namespace HelpDesk.API
 
             string connectionString = Configuration.GetConnectionString("default");
 
+            //Usar sql Server
             services.AddScoped<IDbConnector>(db => new SqlConnector(connectionString));
+
+            //Usar Oracle
+            //services.AddScoped<IDbConnector>(db => new OracleConnector(connectionString));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -48,6 +52,11 @@ namespace HelpDesk.API
             services.AddScoped<IChamadoApplication, ChamadoApplication>();
             services.AddScoped<IChamadoService, ChamadoService>();
             services.AddScoped<IChamadoRepository, ChamadoRepository>();
+
+
+            services.AddScoped<ITipoUsuarioApplication, TipoUsuarioApplication>();
+            services.AddScoped<ITipoUsuarioService, TipoUsuarioService>();
+            services.AddScoped<ITipoUsuarioRepository, TipoUsuarioRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

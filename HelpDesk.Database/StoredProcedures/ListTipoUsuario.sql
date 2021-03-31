@@ -1,0 +1,14 @@
+﻿IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'ListTipoUsuario')
+	DROP PROCEDURE ListTipoUsuario
+GO
+
+CREATE PROCEDURE ListTipoUsuario
+AS
+BEGIN
+	
+	SELECT 
+	 ID_TIPO_USUARIO AS [ID],
+	 DS_TIPO_USUARIO AS [Descricao]
+	FROM TB_TIPO_USUARIO
+
+END

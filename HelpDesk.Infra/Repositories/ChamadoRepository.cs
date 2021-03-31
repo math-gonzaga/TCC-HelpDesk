@@ -23,25 +23,39 @@ namespace HelpDesk.Infra.Repositories
             var parameters = new DynamicParameters();
             parameters.Add("@id", id);
 
-            var chamado = await _dbConnector.dbConnection.QueryAsync<Chamado>("GetChamado", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
+            var multi = await _dbConnector.dbConnection.QueryMultipleAsync("GetChamado", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
 
-            return chamado.FirstOrDefault();
+            var mensagems = multi.Read<MensagemChamado>().ToList();
+            var chamado = multi.Read<Chamado>().FirstOrDefault();
+            chamado.Mensagens = mensagems;
+
+            return chamado;
         }
 
         public async Task<List<Chamado>> GetAll()
         {
-            var chamados = await _dbConnector.dbConnection.QueryAsync<Chamado>("ListChamado", _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
+            var multi = await _dbConnector.dbConnection.QueryMultipleAsync("ListChamado", _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
 
-            return chamados.ToList();
+            var mensagens = multi.Read<MensagemChamado>().ToList();
+            var chamados = multi.Read<Chamado>().ToList();
+
+            foreach (var chamado in chamados)
+            {
+                chamado.Mensagens = mensagens.Where((x) => x.ID == chamado.ID).ToList();
+            }
+
+            return chamados;
         }
 
         public async Task<Chamado> Registrar(Chamado chamado)
         {
+            DataTable MensagemChamadosList = CreateMensagensListParameter(chamado.Mensagens);
+
             var parameters = new DynamicParameters();
             parameters.Add("@nome", chamado.Nome);
-            parameters.Add("@idUsuario", chamado.Usuario.ID);
-            parameters.Add("@idUsuarioResposta", chamado.UsuarioResposta.ID);
-            parameters.Add("@mensagens", chamado.Mensagens);
+            parameters.Add("@idUsuario", chamado.UsuarioID);
+            parameters.Add("@idUsuarioResposta", chamado.UsuarioRespostaID);
+            parameters.Add("@mensagens", GetTableValueParameter(MensagemChamadosList, "dbo.MensagemChamadoListTableType"));
 
             var chamadoID = await _dbConnector.dbConnection.ExecuteAsync("RegistrarChamado", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
 
@@ -54,8 +68,8 @@ namespace HelpDesk.Infra.Repositories
 
             var parameters = new DynamicParameters();
             parameters.Add("@nome", chamado.Nome);
-            parameters.Add("@idUsuario", chamado.Usuario.ID);
-            parameters.Add("@idUsuarioResposta", chamado.UsuarioResposta.ID);
+            parameters.Add("@idUsuario", chamado.UsuarioID);
+            parameters.Add("@idUsuarioResposta", chamado.UsuarioRespostaID);
             parameters.Add("@mensagens", GetTableValueParameter(MensagemChamadosList, "dbo.MensagemChamadoListTableType"));
 
             await _dbConnector.dbConnection.QueryAsync("UpdateChamado", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
@@ -67,7 +81,7 @@ namespace HelpDesk.Infra.Repositories
         {
             DataTable tb = new DataTable();
             tb.Columns.Add("Mensagem", typeof(string));
-            tb.Columns.Add("UsuarioId", typeof(int));
+            tb.Columns.Add("UsuarioID", typeof(int));
             tb.Columns.Add("DataCriacao", typeof(DataSetDateTime));
 
             foreach (var x in mensagemChamados)

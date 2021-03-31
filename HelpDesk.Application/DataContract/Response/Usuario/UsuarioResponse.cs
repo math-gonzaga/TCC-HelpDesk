@@ -1,7 +1,5 @@
 ﻿using HelpDesk.Domain.Models.Enums;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HelpDesk.Application.DataContract.Response.Usuario
 {
@@ -11,5 +9,6 @@ namespace HelpDesk.Application.DataContract.Response.Usuario
         public TipoUsuarionEnum Tipo { get; set; }
         public string Nome { get; set; }
         public string Descricao { get; set; }
+        public DateTime DataCriacao { get; set; }
     }
 }
