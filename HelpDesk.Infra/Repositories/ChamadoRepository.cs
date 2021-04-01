@@ -2,6 +2,7 @@
 using HelpDesk.Domain.Interfaces.Repositories;
 using HelpDesk.Domain.Interfaces.Repositories.DataConnector;
 using HelpDesk.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -25,10 +26,10 @@ namespace HelpDesk.Infra.Repositories
 
             var multi = await _dbConnector.dbConnection.QueryMultipleAsync("GetChamado", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
 
-            var mensagems = multi.Read<MensagemChamado>().ToList();
             var chamado = multi.Read<Chamado>().FirstOrDefault();
-            
-            if(chamado != null)
+            var mensagems = multi.Read<MensagemChamado>().ToList();
+
+            if (chamado != null)
                 chamado.Mensagens = mensagems;
 
             return chamado;
@@ -38,12 +39,12 @@ namespace HelpDesk.Infra.Repositories
         {
             var multi = await _dbConnector.dbConnection.QueryMultipleAsync("ListChamado", _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
 
-            var mensagens = multi.Read<MensagemChamado>().ToList();
             var chamados = multi.Read<Chamado>().ToList();
+            var mensagens = multi.Read<MensagemChamado>().ToList();
 
             foreach (var chamado in chamados)
             {
-                chamado.Mensagens = mensagens.Where((x) => x.ID == chamado.ID).ToList();
+                chamado.Mensagens = mensagens.Where((x) => x.ChamadoID == chamado.ID).ToList();
             }
 
             return chamados;
@@ -59,7 +60,7 @@ namespace HelpDesk.Infra.Repositories
             parameters.Add("@idUsuarioResposta", chamado.UsuarioRespostaID);
             parameters.Add("@mensagens", GetTableValueParameter(MensagemChamadosList, "dbo.MensagemChamadoListTableType"));
 
-            var chamadoID = await _dbConnector.dbConnection.ExecuteAsync("RegistrarChamado", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
+            var chamadoID = (int)await _dbConnector.dbConnection.ExecuteScalarAsync("RegistrarChamado", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
 
             return await Get(chamadoID);
         }
@@ -69,6 +70,7 @@ namespace HelpDesk.Infra.Repositories
             DataTable MensagemChamadosList = CreateMensagensListParameter(chamado.Mensagens);
 
             var parameters = new DynamicParameters();
+            parameters.Add("@id", chamado.ID);
             parameters.Add("@nome", chamado.Nome);
             parameters.Add("@idUsuario", chamado.UsuarioID);
             parameters.Add("@idUsuarioResposta", chamado.UsuarioRespostaID);
@@ -76,19 +78,25 @@ namespace HelpDesk.Infra.Repositories
 
             await _dbConnector.dbConnection.QueryAsync("UpdateChamado", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
 
-            return chamado;
+            return await Get(chamado.ID);
         }
 
         private DataTable CreateMensagensListParameter(List<MensagemChamado> mensagemChamados)
         {
             DataTable tb = new DataTable();
+            tb.Columns.Add("ID", typeof(int));
             tb.Columns.Add("Mensagem", typeof(string));
             tb.Columns.Add("UsuarioID", typeof(int));
-            tb.Columns.Add("DataCriacao", typeof(DataSetDateTime));
+            tb.Columns.Add("DataEnvio", typeof(DateTime));
 
             foreach (var x in mensagemChamados)
             {
-                tb.Rows.Add(x);
+                DataRow row = tb.NewRow();
+                row["ID"] = x.ID;
+                row["Mensagem"] = x.Mensagem;
+                row["UsuarioID"] = x.UsuarioID;
+                row["DataEnvio"] = x.DataEnvio;
+                tb.Rows.Add(row);
             }
 
             return tb;

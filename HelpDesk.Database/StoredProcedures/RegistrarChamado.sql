@@ -4,10 +4,10 @@ GO
 
 CREATE TYPE MensagemChamadoListTableType AS TABLE
 (
-      MensagemID INT
-    , Mensagem VARCHAR
+      ID INT
+    , Mensagem VARCHAR(200)
     , UsuarioId INT
-    , DataCriacao DATETIME
+    , DataEnvio DATETIME
 );
 
 IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'RegistrarChamado')
@@ -16,7 +16,7 @@ GO
 
 CREATE PROCEDURE RegistrarChamado 
 (
-    @nome VARCHAR
+    @nome VARCHAR(200)
     ,@idUsuario INT
     ,@idUsuarioResposta INT = NULL
     ,@mensagens MensagemChamadoListTableType READONLY
@@ -27,7 +27,7 @@ BEGIN
     
     DECLARE @id INT
 
-    SELECT @id = (MAX(ID_CHAMADO) + 1) FROM TB_CHAMADO
+    SELECT @id = (ISNULL(MAX(ID_CHAMADO),0) + 1) FROM TB_CHAMADO
 
     INSERT INTO TB_CHAMADO 
     (
@@ -46,19 +46,19 @@ BEGIN
         GETDATE()
     )
 
-    DECLARE @mensagemID int, @mensagem VARCHAR, @usuarioID INT, @dataCriacao DATETIME
+    DECLARE @mensagemID int, @mensagem VARCHAR(200), @usuarioID INT, @dataEnvio DATETIME
 
     DECLARE cursor1 CURSOR FOR
-    SELECT MensagemID, Mensagem, UsuarioId, DataCriacao FROM @mensagens
+    SELECT ID, Mensagem, UsuarioId, DataEnvio FROM @mensagens
 
     OPEN cursor1
 
-    FETCH NEXT FROM cursor1 INTO @mensagemID, @mensagem, @usuarioID, @dataCriacao
+    FETCH NEXT FROM cursor1 INTO @mensagemID, @mensagem, @usuarioID, @dataEnvio
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
         
-        SELECT @mensagemID = (MAX(ID_MENSAGEM_CHAMADO) + 1) FROM TB_MENSAGEM_CHAMADO
+        SELECT @mensagemID = (ISNULL(MAX(ID_MENSAGEM_CHAMADO),0) + 1) FROM TB_MENSAGEM_CHAMADO
 
         INSERT INTO TB_MENSAGEM_CHAMADO
         (
@@ -77,11 +77,14 @@ BEGIN
             GETDATE()
         )
 
-        FETCH NEXT FROM cursor1 INTO @mensagemID, @mensagem, @usuarioID, @dataCriacao
+        FETCH NEXT FROM cursor1 INTO @mensagemID, @mensagem, @usuarioID, @dataEnvio
     END
 
     CLOSE cursor1
 
     DEALLOCATE cursor1
+
+    SELECT @id
+
 END
 GO

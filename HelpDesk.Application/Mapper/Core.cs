@@ -17,7 +17,9 @@ namespace HelpDesk.Application.Mapper
 
         private void UsuarioMap()
         {
-            CreateMap<RegistrarUsuarioRequest, Usuario>();
+            CreateMap<RegistrarUsuarioRequest, Usuario>()
+                .ForMember(target => target.SenhaHash, opt => opt.MapFrom(source => source.Senha));
+
             CreateMap<UpdateUsuarioRequest, Usuario>();
 
             CreateMap<Usuario, UsuarioResponse>();

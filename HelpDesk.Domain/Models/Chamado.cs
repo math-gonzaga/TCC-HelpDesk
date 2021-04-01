@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace HelpDesk.Domain.Models
 {
-    public class Chamado
+    public class Chamado : EntityBase
     {
-        public int ID { get; set; }
         public string Nome { get; set; }
         public int UsuarioID { get; set; }
         public int UsuarioRespostaID { get; set; }

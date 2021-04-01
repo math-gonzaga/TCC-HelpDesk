@@ -1,10 +1,10 @@
-﻿IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'GetUsuario')
-	DROP PROCEDURE GetUsuario
+﻿IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'GetUsuarioByEmail')
+	DROP PROCEDURE GetUsuarioByEmail
 GO
 
-CREATE PROCEDURE GetUsuario 
+CREATE PROCEDURE GetUsuarioByEmail 
 (
-	@id INT
+	@email VARCHAR(200)
 ) AS
 
 BEGIN
@@ -18,9 +18,8 @@ BEGIN
 		DS_SENHA AS [SenhaHash],
 		DT_CRIACAO_USUARIO AS [DataCriacao]
 	FROM TB_USUARIO
-	WHERE ID_USUARIO = @id
+	WHERE DS_EMAIL LIKE @email
 
 END
 GO
 
-EXEC GetUsuario 1

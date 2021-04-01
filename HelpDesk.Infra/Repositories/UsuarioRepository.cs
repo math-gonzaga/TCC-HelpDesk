@@ -27,12 +27,24 @@ namespace HelpDesk.Infra.Repositories
             return usuario.FirstOrDefault();
         }
 
+        public async Task<Usuario> GetByEmail(string email)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@email", email);
+
+            var usuario = await _dbConnector.dbConnection.QueryAsync<Usuario>("GetUsuarioByEmail", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
+
+            return usuario.FirstOrDefault();
+        }
+
         public async Task<Usuario> Registrar(Usuario usuario)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@nome", usuario.Nome);
             parameters.Add("@tipo", usuario.Tipo);
             parameters.Add("@descricao", usuario.Descricao);
+            parameters.Add("@email", usuario.Email);
+            parameters.Add("@senha", usuario.SenhaHash);
 
             var usuarioID = (int)await _dbConnector.dbConnection.ExecuteScalarAsync("RegistrarUsuario", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
 
@@ -46,6 +58,7 @@ namespace HelpDesk.Infra.Repositories
             parameters.Add("@nome", usuario.Nome);
             parameters.Add("@tipo", usuario.Tipo);
             parameters.Add("@descricao", usuario.Descricao);
+            parameters.Add("@email", usuario.Email);
 
             await _dbConnector.dbConnection.ExecuteAsync("UpdateUsuario", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
 

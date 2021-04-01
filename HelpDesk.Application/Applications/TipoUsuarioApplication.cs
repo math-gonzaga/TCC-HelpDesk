@@ -2,6 +2,7 @@
 using HelpDesk.Application.Interfaces;
 using HelpDesk.Domain.Interfaces.Services;
 using HelpDesk.Domain.Validations.Base;
+using System;
 using System.Threading.Tasks;
 
 namespace HelpDesk.Application.Applications
@@ -19,12 +20,30 @@ namespace HelpDesk.Application.Applications
 
         public async Task<Response> Get(int id)
         {
-            return await _tipoUsuarioService.Get(id);
+            try
+            {
+                return await _tipoUsuarioService.Get(id);
+            }
+            catch (Exception ex)
+            {
+                var response = Report.Create(ex.Message);
+
+                return Response.Unprocessable(response);
+            }
         }
 
         public async Task<Response> GetAll()
         {
-            return await _tipoUsuarioService.GetAll();
+            try
+            {
+                return await _tipoUsuarioService.GetAll();
+            }
+            catch (Exception ex)
+            {
+                var response = Report.Create(ex.Message);
+
+                return Response.Unprocessable(response);
+            }
         }
     }
 }

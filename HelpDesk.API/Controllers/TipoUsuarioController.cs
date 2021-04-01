@@ -1,4 +1,5 @@
 ﻿using HelpDesk.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -6,6 +7,7 @@ namespace HelpDesk.API.Controllers
 {
     [Route("api/tipousuario")]
     [ApiController]
+    [Authorize]
     public class TipoUsuarioController : ControllerBase
     {
         private readonly ITipoUsuarioApplication _tipoUsuarioApplication;

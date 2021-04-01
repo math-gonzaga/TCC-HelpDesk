@@ -6,7 +6,9 @@ CREATE PROCEDURE RegistrarUsuario
 (
 	@nome VARCHAR(200),
 	@tipo INT,
-	@descricao VARCHAR(200)
+	@descricao VARCHAR(200),
+	@email VARCHAR(200),
+	@senha VARCHAR(200)
 ) AS
 
 BEGIN
@@ -20,6 +22,8 @@ BEGIN
 		ID_TIPO_USUARIO,
 		NM_USUARIO,
 		DS_USUARIO,
+		DS_EMAIL,
+		DS_SENHA,
 		DT_CRIACAO_USUARIO
 	)
 	VALUES 
@@ -28,6 +32,8 @@ BEGIN
 		@tipo,
 		@nome,
 		@descricao,
+		@email,
+		@senha,
 		GETDATE()
 	)
 

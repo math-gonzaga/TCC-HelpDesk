@@ -4,6 +4,7 @@ using HelpDesk.Application.Interfaces;
 using HelpDesk.Domain.Interfaces.Services;
 using HelpDesk.Domain.Models;
 using HelpDesk.Domain.Validations.Base;
+using System;
 using System.Threading.Tasks;
 
 namespace HelpDesk.Application.Applications
@@ -21,26 +22,62 @@ namespace HelpDesk.Application.Applications
 
         public async Task<Response> Get(int id)
         {
-            return await _chamadoService.Get(id);
+            try
+            {
+                return await _chamadoService.Get(id);
+            }
+            catch (Exception ex)
+            {
+                var response = Report.Create(ex.Message);
+
+                return Response.Unprocessable(response);
+            }
         }
 
         public async Task<Response> GetAll()
         {
-            return await _chamadoService.GetAll();
+            try
+            {
+                return await _chamadoService.GetAll();
+            }
+            catch (Exception ex)
+            {
+                var response = Report.Create(ex.Message);
+
+                return Response.Unprocessable(response);
+            }
         }
 
         public async Task<Response> Registrar(RegistrarChamadoRequest registrarChamado)
         {
-            var chamado = _mapper.Map<Chamado>(registrarChamado);
+            try
+            {
+                var chamado = _mapper.Map<Chamado>(registrarChamado);
 
-            return await _chamadoService.Registrar(chamado);
+                return await _chamadoService.Registrar(chamado);
+            }
+            catch (Exception ex)
+            {
+                var response = Report.Create(ex.Message);
+
+                return Response.Unprocessable(response);
+            }
         }
 
         public async Task<Response> Update(UpdateChamadoRequest updateChamado)
         {
-            var chamado = _mapper.Map<Chamado>(updateChamado);
+            try
+            {
+                var chamado = _mapper.Map<Chamado>(updateChamado);
 
-            return await _chamadoService.Update(chamado);
+                return await _chamadoService.Update(chamado);
+            }
+            catch (Exception ex)
+            {
+                var response = Report.Create(ex.Message);
+
+                return Response.Unprocessable(response);
+            }
         }
     }
 }

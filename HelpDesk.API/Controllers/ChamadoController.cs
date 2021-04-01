@@ -1,5 +1,6 @@
 ﻿using HelpDesk.Application.DataContract.Request.Chamado;
 using HelpDesk.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace HelpDesk.API.Controllers
 {
     [Route("api/chamado")]
     [ApiController]
+    [Authorize]
     public class ChamadoController : ControllerBase
     {
         private readonly IChamadoApplication _chamadoApplication;

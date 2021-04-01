@@ -8,5 +8,6 @@ namespace HelpDesk.Application.DataContract.Request.Usuario
         public TipoUsuarionEnum Tipo { get; set; }
         public string Nome { get; set; }
         public string Descricao { get; set; }
+        public string Email { get; set; }
     }
 }

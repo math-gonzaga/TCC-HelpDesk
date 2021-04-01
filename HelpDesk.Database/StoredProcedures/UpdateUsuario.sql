@@ -7,7 +7,8 @@ CREATE PROCEDURE UpdateUsuario
 	@id INT,
 	@nome VARCHAR(200),
 	@tipo INT,
-	@descricao VARCHAR(200)
+	@descricao VARCHAR(200),
+	@email VARCHAR(200)
 ) AS
 
 BEGIN
@@ -15,7 +16,8 @@ BEGIN
 	UPDATE TB_USUARIO
 		SET ID_TIPO_USUARIO = @tipo,
 		NM_USUARIO = @nome,
-		DS_USUARIO = @descricao
+		DS_USUARIO = @descricao,
+		DS_EMAIL = @email
 	WHERE 
 		ID_Usuario = @id
 END

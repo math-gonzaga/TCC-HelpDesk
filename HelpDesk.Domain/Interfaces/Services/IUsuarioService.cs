@@ -6,10 +6,13 @@ namespace HelpDesk.Domain.Interfaces.Services
 {
     public interface IUsuarioService
     {
-        Task<Response> Get(int id);
+        Task<Response<bool>> AutenticarUsuario(string senha, Usuario usuario);
+
+        Task<Response<Usuario>> Get(int id);
 
         Task<Response> Registrar(Usuario usuario);
 
         Task<Response> Update(Usuario usuario);
+        Task<Response<Usuario>> GetByEmail(string email);
     }
 }

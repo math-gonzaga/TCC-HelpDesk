@@ -9,6 +9,7 @@ namespace HelpDesk.Application.DataContract.Response.Usuario
         public TipoUsuarionEnum Tipo { get; set; }
         public string Nome { get; set; }
         public string Descricao { get; set; }
+        public string Email { get; set; }
         public DateTime DataCriacao { get; set; }
     }
 }

@@ -20,6 +20,14 @@ namespace HelpDesk.Domain.Validations
                 .NotEmpty()
                 .NotNull()
                 .Length(3, 200);
+
+            RuleFor(x => x.Email)
+                .NotEmpty()
+                .NotNull();
+
+            RuleFor(x => x.SenhaHash)
+                .NotEmpty()
+                .NotNull();
         }
     }
 }

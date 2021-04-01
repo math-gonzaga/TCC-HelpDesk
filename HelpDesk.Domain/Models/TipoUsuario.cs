@@ -2,9 +2,8 @@
 
 namespace HelpDesk.Domain.Models
 {
-    public class TipoUsuario
+    public class TipoUsuario : EntityBase
     {
-        public int ID { get; set; }
         public string Descricao { get; set; }
     }
 }

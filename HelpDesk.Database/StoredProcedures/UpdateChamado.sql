@@ -4,11 +4,12 @@ GO
 
 CREATE TYPE MensagemChamadoListTableType AS TABLE
 (
-      MensagemID INT
-    , Mensagem VARCHAR
+      ID INT
+    , Mensagem VARCHAR(200)
     , UsuarioId INT
-    , DataCriacao DATETIME
+    , DataEnvio DATETIME
 );
+
 
 IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'UpdateChamado')
 	DROP PROCEDURE UpdateChamado
@@ -27,20 +28,19 @@ AS
 BEGIN 
     
     UPDATE TB_CHAMADO
-        SET ID_USUARIO = @idUsuario,
-        ID_USUARIO_RESPOSTA = @idUsuarioResposta,
+        SET ID_USUARIO_RESPOSTA = @idUsuarioResposta,
         DS_CHAMADO = @nome
     WHERE 
         ID_CHAMADO = @id
     
-    DECLARE @mensagemID int, @mensagem VARCHAR, @usuarioID INT, @dataCriacao DATETIME
+    DECLARE @mensagemID int, @mensagem VARCHAR(200), @usuarioID INT, @dataEnvio DATETIME
 
     DECLARE cursor1 CURSOR FOR
-    SELECT MensagemID, Mensagem, UsuarioId, DataCriacao FROM @mensagens
+    SELECT ID, Mensagem, UsuarioId, DataEnvio FROM @mensagens
 
     OPEN cursor1
 
-    FETCH NEXT FROM cursor1 INTO @mensagemID, @mensagem, @usuarioID, @dataCriacao
+    FETCH NEXT FROM cursor1 INTO @mensagemID, @mensagem, @usuarioID, @dataEnvio
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
@@ -54,6 +54,9 @@ BEGIN
             END
         ELSE
             BEGIN
+
+            DECLARE @newMensagemID INT = (SELECT (ISNULL(MAX(ID_MENSAGEM_CHAMADO),0)+ 1) FROM TB_MENSAGEM_CHAMADO )
+
             INSERT INTO TB_MENSAGEM_CHAMADO
                 (
                     ID_MENSAGEM_CHAMADO,
@@ -64,7 +67,7 @@ BEGIN
                 )
                 VALUES 
                 (
-                    @mensagemID,
+                    @newMensagemID,
                     @id,
                     @usuarioID,
                     @mensagem,
@@ -72,7 +75,7 @@ BEGIN
                 )
             END
 
-        FETCH NEXT FROM cursor1 INTO @mensagemID, @mensagem, @usuarioID, @dataCriacao
+        FETCH NEXT FROM cursor1 INTO @mensagemID, @mensagem, @usuarioID, @dataEnvio
     END
 
     CLOSE cursor1

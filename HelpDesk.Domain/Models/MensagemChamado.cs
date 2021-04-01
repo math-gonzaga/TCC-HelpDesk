@@ -2,11 +2,11 @@
 
 namespace HelpDesk.Domain.Models
 {
-    public class MensagemChamado
+    public class MensagemChamado : EntityBase
     {
-        public int ID { get; set; }
+        public int ChamadoID { get; set; }
         public string Mensagem { get; set; }
-        public int Usuario { get; set; }
+        public int UsuarioID { get; set; }
         public DateTime DataEnvio { get; set; }
     }
 }

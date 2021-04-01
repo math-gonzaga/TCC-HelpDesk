@@ -1,18 +1,17 @@
-using HelpDesk.Application.Applications;
-using HelpDesk.Application.Interfaces;
+using HelpDesk.API.Extensions;
 using HelpDesk.Application.Mapper;
-using HelpDesk.Domain.Interfaces.Repositories;
+using HelpDesk.Application.Models;
 using HelpDesk.Domain.Interfaces.Repositories.DataConnector;
-using HelpDesk.Domain.Interfaces.Services;
-using HelpDesk.Domain.Services;
 using HelpDesk.Infra.DataConnector;
-using HelpDesk.Infra.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.Linq;
+using System.Text;
 
 namespace HelpDesk.API
 {
@@ -30,49 +29,60 @@ namespace HelpDesk.API
         {
             services.AddAutoMapper(typeof(Core));
             services.AddControllers();
-            services.AddSwaggerGen(c =>
+
+            var authSettingsSection = Configuration.GetSection("AuthSettings");
+            services.Configure<AuthSettings>(authSettingsSection);
+
+            var authSettings = authSettingsSection.Get<AuthSettings>();
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.Secret));
+
+            services.AddAuthentication(x =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HelpDesk.API", Version = "v1" });
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
             });
 
             string connectionString = Configuration.GetConnectionString("default");
 
-            //Usar sql Server
             services.AddScoped<IDbConnector>(db => new SqlConnector(connectionString));
-
-            //Usar Oracle
             //services.AddScoped<IDbConnector>(db => new OracleConnector(connectionString));
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            services.AddScoped<IUsuarioApplication, UsuarioApplication>();
-            services.AddScoped<IUsuarioService, UsuarioService>();
-            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-
-            services.AddScoped<IChamadoApplication, ChamadoApplication>();
-            services.AddScoped<IChamadoService, ChamadoService>();
-            services.AddScoped<IChamadoRepository, ChamadoRepository>();
-
-
-            services.AddScoped<ITipoUsuarioApplication, TipoUsuarioApplication>();
-            services.AddScoped<ITipoUsuarioService, TipoUsuarioService>();
-            services.AddScoped<ITipoUsuarioRepository, TipoUsuarioRepository>();
+            services.RegisterIoC();
+            services.SwaggerConfigurarion();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSwagger();
+            app.UseSwaggerUI(setup =>
+            {
+                setup.RoutePrefix = "swagger";
+                setup.SwaggerEndpoint("/swagger/v1/swagger.json", "Api Documentation");
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HelpDesk.API v1"));
             }
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
