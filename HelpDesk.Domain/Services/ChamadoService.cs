@@ -47,6 +47,7 @@ namespace HelpDesk.Domain.Services
                 return erros;
 
             var data = await _chamadoRepository.Registrar(chamado);
+
             response.Data = data;
 
             return response;

@@ -52,59 +52,49 @@ namespace HelpDesk.Infra.Repositories
 
         public async Task<Chamado> Registrar(Chamado chamado)
         {
-            DataTable MensagemChamadosList = CreateMensagensListParameter(chamado.Mensagens);
-
             var parameters = new DynamicParameters();
             parameters.Add("@nome", chamado.Nome);
             parameters.Add("@idUsuario", chamado.UsuarioID);
             parameters.Add("@idUsuarioResposta", chamado.UsuarioRespostaID);
-            parameters.Add("@mensagens", GetTableValueParameter(MensagemChamadosList, "dbo.MensagemChamadoListTableType"));
 
             var chamadoID = (int)await _dbConnector.dbConnection.ExecuteScalarAsync("RegistrarChamado", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
+
+            foreach (var item in chamado.Mensagens)
+            {
+                MensagemSave(item, chamadoID);
+            }
 
             return await Get(chamadoID);
         }
 
         public async Task<Chamado> Update(Chamado chamado)
         {
-            DataTable MensagemChamadosList = CreateMensagensListParameter(chamado.Mensagens);
-
             var parameters = new DynamicParameters();
             parameters.Add("@id", chamado.ID);
             parameters.Add("@nome", chamado.Nome);
             parameters.Add("@idUsuario", chamado.UsuarioID);
             parameters.Add("@idUsuarioResposta", chamado.UsuarioRespostaID);
-            parameters.Add("@mensagens", GetTableValueParameter(MensagemChamadosList, "dbo.MensagemChamadoListTableType"));
 
             await _dbConnector.dbConnection.QueryAsync("UpdateChamado", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
+
+            foreach (var item in chamado.Mensagens)
+            {
+                MensagemSave(item, chamado.ID);
+            }
 
             return await Get(chamado.ID);
         }
 
-        private DataTable CreateMensagensListParameter(List<MensagemChamado> mensagemChamados)
+
+        public void MensagemSave(MensagemChamado mensagem, int chamadoId)
         {
-            DataTable tb = new DataTable();
-            tb.Columns.Add("ID", typeof(int));
-            tb.Columns.Add("Mensagem", typeof(string));
-            tb.Columns.Add("UsuarioID", typeof(int));
-            tb.Columns.Add("DataEnvio", typeof(DateTime));
+            var parameters = new DynamicParameters();
+            parameters.Add("@id", mensagem.ID);
+            parameters.Add("@chamadoId", chamadoId);
+            parameters.Add("@idUsuario", mensagem.UsuarioID);
+            parameters.Add("@mensagem", mensagem.Mensagem);
 
-            foreach (var x in mensagemChamados)
-            {
-                DataRow row = tb.NewRow();
-                row["ID"] = x.ID;
-                row["Mensagem"] = x.Mensagem;
-                row["UsuarioID"] = x.UsuarioID;
-                row["DataEnvio"] = x.DataEnvio;
-                tb.Rows.Add(row);
-            }
-
-            return tb;
-        }
-
-        public static Dapper.SqlMapper.ICustomQueryParameter GetTableValueParameter(DataTable dt, string type)
-        {
-            return dt.AsTableValuedParameter(type);
+            _dbConnector.dbConnection.Execute("RegistrarMensagem", parameters, _dbConnector.dbTransaction, commandType: CommandType.StoredProcedure);
         }
     }
 }

@@ -38,7 +38,11 @@ namespace HelpDesk.Domain.Services
             var response = new Response<Usuario>();
 
             var data = await _usuarioRepository.GetByEmail(email);
-            response.Data = data;
+
+            if(data == null)
+                response.Report.Add(Report.Create("Email e senha Invalidos"));
+            else
+                response.Data = data;
 
             return response;
         }

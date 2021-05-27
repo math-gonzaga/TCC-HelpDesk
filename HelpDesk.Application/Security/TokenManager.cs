@@ -40,6 +40,7 @@ namespace HelpDesk.Application.Security
 
             var response = new AutenticarResponse()
             {
+                UsuarioID = usuario.ID,
                 Token = tokenHandler.WriteToken(token),
                 ExpiraEm = _authSettings.ExpireIn,
                 Type = JwtBearerDefaults.AuthenticationScheme

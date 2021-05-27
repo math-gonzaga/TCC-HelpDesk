@@ -9,7 +9,7 @@ namespace HelpDesk.API.Controllers
 {
     [Route("api/chamado")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ChamadoController : ControllerBase
     {
         private readonly IChamadoApplication _chamadoApplication;

@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System.Linq;
 using System.Text;
 
 namespace HelpDesk.API
@@ -77,6 +76,11 @@ namespace HelpDesk.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 
             app.UseHttpsRedirection();
 

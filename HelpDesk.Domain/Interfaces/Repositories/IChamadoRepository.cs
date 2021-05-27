@@ -15,5 +15,7 @@ namespace HelpDesk.Domain.Interfaces.Repositories
         Task<Chamado> Registrar(Chamado chamado);
 
         Task<Chamado> Update(Chamado chamado);
+
+        void MensagemSave(MensagemChamado mensagem, int chamadoId);
     }
 }
